@@ -1,0 +1,52 @@
+name: AutoCodeRover Workflow
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  run-autocoderover:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Run Docker Build and Start
+        run: |
+          chmod +x build_and_run_docker.sh
+          ./build_and_run_docker.sh
+
+      - name: Run AutoCodeRover
+        run: |
+          chmod +x run_autocoderover.sh
+          ./run_autocoderover.sh \
+              --task-id "${{ github.event.issue.number }}" \
+              --clone-link "${{ github.event.repository.clone_url }}" \
+              --commit-hash "${{ github.event.issue.pull_request.head.sha }}" \
+              --issue-link "${{ github.event.issue.html_url }}" \
+              "${{ github.repository }}" "${{ github.event.issue.title }}" "${{ github.event.issue.body }}"
+
+      - name: Create Pull Request
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: branch } = await octokit.rest.repos.createOrUpdateFileContents({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              path: 'README.md',
+              message: 'Auto-generated changes based on issue',
+              content: Buffer.from('Your patch content').toString('base64'),
+              branch: 'automated-patch'
+            });
+
+            const { data: pullRequest } = await octokit.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Auto-generated PR based on issue',
+              head: branch.name,
+              base: 'master'
+            });
+
+            console.log(`Pull request created: ${pullRequest.html_url}`);
