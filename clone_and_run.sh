@@ -12,8 +12,6 @@ docker build -f Dockerfile -t my_custom_image .
 # Run the Docker container in detached mode
 docker run -d -e OPENAI_KEY="${OPENAI_KEY:-OPENAI_API_KEY}" -p 3000:3000 -p 5000:5000 my_custom_image
 
-cd /opt/auto-code-rover
-
 conda activate auto-code-rover
 
 # Parse command-line arguments
