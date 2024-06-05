@@ -14,8 +14,8 @@ docker run -d -e OPENAI_KEY="${OPENAI_KEY:-OPENAI_API_KEY}" -p 3000:3000 -p 5000
 
 source $HOME/.bashrc
 
-conda init
-conda activate auto-code-rover
+# conda init
+# conda activate auto-code-rover
 
 # # Parse command-line arguments
 # while [[ $# -gt 0 ]]; do
