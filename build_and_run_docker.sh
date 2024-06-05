@@ -13,5 +13,5 @@ docker build -f Dockerfile -t my_custom_image .
 cd ..
 rm -rf tmp_dockerfiles
 
-# Run the Docker container
-docker run -it -e OPENAI_KEY="${OPENAI_KEY:-OPENAI_API_KEY}" -p 3000:3000 -p 5000:5000 my_custom_image
+# Run the Docker container in detached mode
+docker run -d -e OPENAI_KEY="${OPENAI_KEY:-OPENAI_API_KEY}" -p 3000:3000 -p 5000:5000 my_custom_image
