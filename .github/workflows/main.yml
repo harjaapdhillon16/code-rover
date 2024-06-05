@@ -12,15 +12,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Run AutoCodeRover
-        run: |
-          chmod +x clone_and_run.sh
-          ./clone_and_run.sh \
-              --task-id "${{ github.event.issue.number }}" \
-              --clone-link "${{ github.event.repository.clone_url }}" \
-              --commit-hash "${{ github.event.issue.pull_request.head.sha }}" \
-              --issue-link "${{ github.event.issue.html_url }}" \
-              "${{ github.repository }}" "${{ github.event.issue.title }}" "${{ github.event.issue.body }}"
+      - name: Install Dependencies
+        run: npm install
 
       - name: Create Pull Request
         uses: actions/github-script@v5

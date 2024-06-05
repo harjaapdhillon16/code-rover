@@ -1,0 +1,8 @@
+{
+  "name": "auto-code-rover",
+  "version": "1.0.0",
+  "description": "Auto Code Rover GitHub Actions",
+  "dependencies": {
+    "@octokit/rest": "^18.0.0"
+  }
+}
