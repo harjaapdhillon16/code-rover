@@ -10,26 +10,19 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3  # Updated to v3 for better compatibility
+        uses: actions/checkout@v3
 
-      # AutoCodeRover Step
-      - name: Run AutoCodeRover
-        run: |
-          chmod +x clone_and_run.sh
-          ./clone_and_run.sh \
-              --task-id "${{ github.event.issue.number }}" \
-              --clone-link "${{ github.event.repository.clone_url }}" \
-              --commit-hash "${{ github.event.issue.pull_request.head.sha }}" \
-              --issue-link "${{ github.event.issue.html_url }}" \
-              "${{ github.repository }}" "${{ github.event.issue.title }}" "${{ github.event.issue.body }}"
-          
+    
+
+      # Create Pull Request
       - name: Create Pull Request
+        if: steps.check_changes.outputs.changes_exist == 'true'
         uses: peter-evans/create-pull-request@v4
         with:
           commit-message: "Auto-generated patch based on issue #${{ github.event.issue.number }}"
           title: "Auto-generated patch based on issue #${{ github.event.issue.number }}"
           branch: "autocoderover-patch-${{ github.event.issue.number }}"
-          base: "main"   
+          base: "master"   # Changed to "master" 
           body: |
             This pull request contains an auto-generated patch based on issue #${{ github.event.issue.number }}. Please review the changes carefully before merging.
           labels: "auto-generated"
