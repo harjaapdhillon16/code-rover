@@ -12,15 +12,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Run Docker Build and Start
-        run: |
-          chmod +x build_and_run_docker.sh
-          ./build_and_run_docker.sh
-
       - name: Run AutoCodeRover
         run: |
-          chmod +x run_autocoderover.sh
-          ./run_autocoderover.sh \
+          chmod +x clone_and_run.sh
+          ./clone_and_run.sh \
               --task-id "${{ github.event.issue.number }}" \
               --clone-link "${{ github.event.repository.clone_url }}" \
               --commit-hash "${{ github.event.issue.pull_request.head.sha }}" \
