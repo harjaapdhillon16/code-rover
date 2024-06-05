@@ -12,10 +12,24 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-    
+      # AutoCodeRover Step
+      - name: Run AutoCodeRover
+        run: |
+          chmod +x clone_and_run.sh
+          ./clone_and_run.sh \
+              --task-id "${{ github.event.issue.number }}" \
+              --clone-link "${{ github.event.repository.clone_url }}" \
+              --commit-hash "${{ github.event.issue.pull_request.head.sha }}" \
+              --issue-link "${{ github.event.issue.html_url }}"
+
+      # Check for Changes
+      - name: Check for Patch File Changes
+        id: check_changes
+        run: echo "::set-output name=changes_exist::$(if [ -n "$(git status --porcelain auto_coderover_patch/*)" ]; then echo "true"; else echo "false"; fi)"
 
       # Create Pull Request
       - name: Create Pull Request
+        if: steps.check_changes.outputs.changes_exist == 'true'
         uses: peter-evans/create-pull-request@v4
         with:
           commit-message: "Auto-generated patch based on issue #${{ github.event.issue.number }}"
