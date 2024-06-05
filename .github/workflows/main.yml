@@ -16,7 +16,6 @@ jobs:
 
       # Create Pull Request
       - name: Create Pull Request
-        if: steps.check_changes.outputs.changes_exist == 'true'
         uses: peter-evans/create-pull-request@v4
         with:
           commit-message: "Auto-generated patch based on issue #${{ github.event.issue.number }}"
