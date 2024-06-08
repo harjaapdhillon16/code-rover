@@ -10,6 +10,49 @@ cd tmp_dockerfiles
 docker build -f Dockerfile -t my_custom_image .
 
 # Run the Docker container in detached mode
-docker run -d -e OPENAI_KEY="${OPENAI_KEY:-OPENAI_API_KEY}" -p 3000:3000 -p 5000:5000 my_custom_image
+docker run -d -e OPENAI_KEY="${OPENAI_KEY:-$OPENAI_API_KEY}" -p 3000:3000 -p 5000:5000 my_custom_image
 
-exec $SHELL -l -c "./run_autocoderover_main.sh $@" 
+# Initialize and activate the Conda environment
+eval "$(conda shell.bash hook)"
+conda activate auto-code-rover
+
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --task-id)
+        TASK_ID="$2"
+        shift
+        shift
+        ;;
+        --clone-link)
+        CLONE_LINK="$2"
+        shift
+        shift
+        ;;
+        --commit-hash)
+        COMMIT_HASH="$2"
+        shift
+        shift
+        ;;
+        --issue-link)
+        ISSUE_LINK="$2"
+        shift
+        shift
+        ;;
+        *)
+        shift
+        ;;
+    esac
+done
+
+# Run AutoCodeRover command
+PYTHONPATH=. python app/main.py github-issue \
+    --output-dir output \
+    --setup-dir setup \
+    --model gpt-4-0125-preview \
+    --model-temperature 0.2 \
+    --task-id "$TASK_ID" \
+    --clone-link "$CLONE_LINK" \
+    --commit-hash "$COMMIT_HASH" \
+    --issue-link "$ISSUE_LINK"
