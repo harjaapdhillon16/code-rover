@@ -7,16 +7,15 @@ git clone https://github.com/nus-apr/auto-code-rover tmp_dockerfiles
 cd tmp_dockerfiles
 
 # Build the Docker image
-docker build -f Dockerfile -t my_custom_image .
+docker build -f Dockerfile -t acr .
 
 # Run the Docker container in detached mode
-docker run -d -e OPENAI_KEY="${OPENAI_KEY:-$OPENAI_API_KEY}" -p 3000:3000 -p 5000:5000 my_custom_image
+docker run -it -e OPENAI_KEY="${OPENAI_KEY:-OPENAI_API_KEY}" -p 3000:3000 -p 5000:5000 acr
 
-# Initialize and activate the Conda environment
-eval "$(conda shell.bash hook)"
+conda init
 conda activate auto-code-rover
 
-# Parse command-line arguments
+# # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
@@ -46,7 +45,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Run AutoCodeRover command
+# # Run AutoCodeRover command
 PYTHONPATH=. python app/main.py github-issue \
     --output-dir output \
     --setup-dir setup \
@@ -55,4 +54,4 @@ PYTHONPATH=. python app/main.py github-issue \
     --task-id "$TASK_ID" \
     --clone-link "$CLONE_LINK" \
     --commit-hash "$COMMIT_HASH" \
-    --issue-link "$ISSUE_LINK"
+    --issue-link "$ISSUE_LINK" \
